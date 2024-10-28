@@ -874,7 +874,13 @@ impl FormatString {
         };
 
         // On parts[0] can still be the conversion (!r, !s, !a)
-        let parts: Vec<&str> = arg_part.splitn(2, '!').collect();
+        let mut parts: Vec<&str> = arg_part.splitn(2, '!').collect();
+
+        // workaround for https://github.com/RustPython/RustPython/issues/5427
+        if parts[0].ends_with('[') || parts[1].starts_with("]") {
+            parts = vec![text];
+        }
+
         // before the bang is a keyword or arg index, after the comma is maybe a conversion spec.
         let arg_part = parts[0];
 
